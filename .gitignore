@@ -112,3 +112,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Mac sutff
+.DS_Store
+
+# secrets
+/secrets.py
+
+# testing reports
+/report
+node_modules
