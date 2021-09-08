@@ -1,4 +1,5 @@
 from time import sleep
+from appium import webdriver
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -15,7 +16,20 @@ from xpaths import (
 )
 
 
+class DriverManager:
+    def __init__(self, desired_cap):
+        self.desired_cap = desired_cap
+        self._remote()
+
+    def _remote(self):
+        self.driver = webdriver.Remote("http://localhost:4723/wd/hub", self.desired_cap)
+        self.driver.implicitly_wait(10)
+
+
 class User:
+    def element_selector(self, string):
+        pass
+
     def _find_element_by_id(self, id_):
         return self.manager.driver.find_element_by_id(id_)
 

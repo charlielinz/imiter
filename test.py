@@ -5,8 +5,7 @@ from time import sleep
 import HtmlTestRunner
 
 from utils import ANDROID_SETTING_CAPS, CS_APP_CAPS, GOOGLE_STORE_CAPS
-from users import CSUser
-from driver_managers import DriverManager
+from users import CSUser, DriverManager
 from xpaths import ADVENTUREPAGE, ANDROID_SETTING, HOMEPAGE, SIGNUPPAGE
 
 
