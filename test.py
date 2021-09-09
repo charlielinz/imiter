@@ -1,5 +1,6 @@
 import unittest
 from secrets import ACCOUNT
+from time import sleep
 
 import HtmlTestRunner
 
@@ -78,7 +79,7 @@ class TestAdventure(unittest.TestCase):
         self.user = User(CS_APP_CAPS)
         self.cs_user = CSUser(self.user)
 
-    def test_early_bird(self):
+    def test_early_bird_list(self):
         self.cs_user.early_bird_list()
         early_bird_title = self.cs_user.element_selector("+android.widget.TextView+早鳥首賣")
         self.assertEqual(early_bird_title.get_attribute("text"), "早鳥首賣")

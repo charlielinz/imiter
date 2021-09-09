@@ -51,7 +51,7 @@ class User:
             class_name = attribute_list[0]
             text = attribute_list[1]
             return self.user.driver.find_element_by_android_uiautomator(
-                f".className('{class_name}').text('{text}')"
+                f'.className({class_name}).text("{text}")'
             )
         raise ValueError("the string doesn't include a prefix")
 
@@ -79,8 +79,8 @@ class User:
             attribute_list = original_string.split("+")
             class_name = attribute_list[0]
             text = attribute_list[1]
-            return self.user.driver.find_elements_by_android_uiautomator(
-                f".className('{class_name}').text('{text}')"
+            return self.user.driver.find_element_by_android_uiautomator(
+                f'.className({class_name}).text("{text}")'
             )
         raise ValueError("the string doesn't include a prefix")
 
@@ -144,18 +144,20 @@ class CSUser(User):
     def early_bird_list(self):
         while True:
             try:
-                self.element_selector("+android.widget.TextView+看全部早鳥首賣")
+                self.element_selector("+android.widget.TextView+看全部早鳥首賣").click()
                 break
             except NoSuchElementException:
                 self._swipe_up()
+                sleep(2)
 
-    # def early_bird_prudoct_page(self):
-    #     self.early_bird_list()
-    #     for looking_early_product in range(20):
-    #         button_list = self._find_elements_by_classname("android.widget.TextView")
-    #         for button in button_list:
-    #             if "金額" in str(button.get_attribute("text")):
-    #                 button.click()
+    def early_bird_prudoct_page(self):
+        self.early_bird_list()
+        for looking_early_product in range(20):
+            button_list = self.element_selector("#android.widget.TextView")
+            for button in button_list:
+                if "金額" in str(button.get_attribute("text")):
+                    button.click()
+                    break
 
     def sign_up_page(self):
         self.account_page()
@@ -240,8 +242,8 @@ class CSUser(User):
         self.element_selector(ACCOUNTPAGE["sign_in_facebook"]).click()
         sleep(2)
         try:
-            self.element_selector("com.android.chrome:id/terms_accept").click()
-            self.element_selector("com.android.chrome:id/negative_button").click()
+            self.element_selector("@com.android.chrome:id/terms_accept").click()
+            self.element_selector("@com.android.chrome:id/negative_button").click()
         except NoSuchElementException:
             pass
         sleep(2)
@@ -263,8 +265,8 @@ class CSUser(User):
         self.element_selector(ACCOUNTPAGE["sign_in_line"]).click()
         sleep(2)
         try:
-            self.element_selector("com.android.chrome:id/terms_accept").click()
-            self.element_selector("com.android.chrome:id/negative_button").click()
+            self.element_selector("@com.android.chrome:id/terms_accept").click()
+            self.element_selector("@com.android.chrome:id/negative_button").click()
         except NoSuchElementException:
             pass
         sleep(2)
