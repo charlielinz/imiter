@@ -1,3 +1,5 @@
+import string
+import random
 from time import sleep
 from appium import webdriver
 
@@ -5,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from xpaths import (
     ACCOUNTPAGE,
-    ADVENTUREPAGE,
+    DISCOVERYPAGE,
     ANDROID_SETTING,
     FACEBOOK_SIGNIN,
     GOOGLE_SIGNIN,
@@ -47,7 +49,7 @@ class User:
             return self.user.driver.find_element_by_xpath(xpath)
         if prefix == "+":
             original_string = string.replace("+", "", 1)
-            attribute_list = original_string.split("+")
+            attribute_list = original_string.split("&")
             class_name = attribute_list[0]
             text = attribute_list[1]
             return self.user.driver.find_element_by_android_uiautomator(
@@ -76,7 +78,7 @@ class User:
             return self.user.driver.find_elements_by_xpath(xpath)
         if prefix == "+":
             original_string = string.replace("+", "", 1)
-            attribute_list = original_string.split("+")
+            attribute_list = original_string.split("&")
             class_name = attribute_list[0]
             text = attribute_list[1]
             return self.user.driver.find_element_by_android_uiautomator(
@@ -129,8 +131,8 @@ class CSUser(User):
     def __init__(self, user):
         self.user = user
 
-    def adventure_page(self):
-        self.element_selector(HOMEPAGE["adventure"]).click()
+    def discovery_page(self):
+        self.element_selector(HOMEPAGE["discovery"]).click()
 
     def search_page(self):
         self.element_selector(HOMEPAGE["search"]).click()
@@ -150,15 +152,6 @@ class CSUser(User):
                 self._swipe_up()
                 sleep(2)
 
-    def early_bird_prudoct_page(self):
-        self.early_bird_list()
-        for looking_early_product in range(20):
-            button_list = self.element_selector("#android.widget.TextView")
-            for button in button_list:
-                if "金額" in str(button.get_attribute("text")):
-                    button.click()
-                    break
-
     def sign_up_page(self):
         self.account_page()
         self.element_selector(ACCOUNTPAGE["sign_up_page"]).click()
@@ -166,6 +159,11 @@ class CSUser(User):
     def sign_in_page(self):
         self.account_page()
         self.element_selector(ACCOUNTPAGE["sign_in_normal"]).click()
+
+    def get_random_string(self):
+        letters = string.ascii_lowercase
+        random_string = "".join(random.choice(letters) for num in range(8))
+        return random_string
 
     def sign_up(self, lastname, firstname, email, password, password_confirmed):
         self.sign_up_page()

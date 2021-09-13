@@ -23,7 +23,7 @@ c = (
 )
 cs_app_short = "/hierarchy" + a[0] + b[0] + a[0] + b[0] + a[0] + a[0] + c[0] + c[0] + c[0]
 homepage_short = cs_app_short + c[0] + c[0] + c[0] + c[0] + c[2] + c[0]
-adventure_short = cs_app_short + c[0] + c[0] + c[0] + c[0] + c[1] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[2]
+discovery_short = cs_app_short + c[0] + c[0] + c[0] + c[0] + c[1] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[0] + c[2]
 accountpage_short = cs_app_short + c[2] + c[0] + c[0] + c[0] + c[0]
 sign_up_short = cs_app_short + c[2] + c[2] + c[0] + c[1]
 sign_in_short = cs_app_short + c[2] + c[2] + c[0] + c[1]
@@ -42,14 +42,14 @@ ANDROID_SETTING = {
 }
 
 HOMEPAGE = {
-    "adventure": homepage_short + "/android.widget.Button[1]",
+    "discovery": homepage_short + "/android.widget.Button[1]",
     "search": homepage_short + "/android.widget.Button[2]",
     "favorite": homepage_short + "/android.widget.Button[3]",
     "account": homepage_short + "/android.widget.Button[4]",
 }
 
-ADVENTUREPAGE = {
-    "early_bird_list": adventure_short + "/android.widget.ScrollView" + c[0] + c[1] + c[0] + c[0] + "/android.widget.TextView"
+DISCOVERYPAGE = {
+    "early_bird_list": discovery_short + "/android.widget.ScrollView" + c[0] + c[1] + c[0] + c[0] + "/android.widget.TextView"
 }
 
 ACCOUNTPAGE = {

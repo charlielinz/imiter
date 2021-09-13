@@ -6,7 +6,7 @@ import HtmlTestRunner
 
 from utils import ANDROID_SETTING_CAPS, CS_APP_CAPS, GOOGLE_STORE_CAPS
 from users import User, CSUser
-from xpaths import ADVENTUREPAGE, ANDROID_SETTING, HOMEPAGE, SIGNUPPAGE
+from xpaths import DISCOVERYPAGE, ANDROID_SETTING, HOMEPAGE, SIGNUPPAGE
 
 
 class TestGeneralSignin(unittest.TestCase):
@@ -31,9 +31,23 @@ class TestGeneralSignin(unittest.TestCase):
         self.assertEqual(sign_up_finish.get_attribute("clickable"), "true")
 
     def test_sign_in(self):
-        self.cs_user.sign_in("test2@test.com", "00000000")
+        self.cs_user.sign_in(email="test2@test.com", password="00000000")
         account_page = self.cs_user.element_selector(HOMEPAGE["account"])
         self.assertEqual(account_page.get_attribute("clickable"), "true")
+
+    def test_sign_in_with_invalid_syntax_of_email(self):
+        bad_email = self.cs_user.get_random_string()
+        self.cs_user.sign_in(email=bad_email, password="00000000")
+        email_field = self.cs_user.element_selector(
+            "+android.widget.TextView&Email 格式錯誤"
+        )
+        self.assertEqual(email_field.get_attribute("displayed"), "true")
+
+    def test_sign_in_with_wrong_email(self):
+        wrong_email = self.cs_user.get_random_string() + "@gmail.com"
+        self.cs_user.sign_in(email=wrong_email, password="00000000")
+        email_field = self.cs_user.element_selector("@android:id/message")
+        self.assertEqual(email_field.get_attribute("text"), "請輸入正確的 Email 及密碼")
 
 
 class TestThirdPartySignin(unittest.TestCase):
@@ -74,18 +88,17 @@ class TestThirdPartySignin(unittest.TestCase):
         self.assertEqual(account_page.get_attribute("clickable"), "true")
 
 
-class TestAdventure(unittest.TestCase):
+class TestDiscovery(unittest.TestCase):
     def setUp(self):
         self.user = User(CS_APP_CAPS)
         self.cs_user = CSUser(self.user)
 
     def test_early_bird_list(self):
         self.cs_user.early_bird_list()
-        early_bird_title = self.cs_user.element_selector("+android.widget.TextView+早鳥首賣")
+        early_bird_title = self.cs_user.element_selector(
+            "+android.widget.TextView&早鳥首賣"
+        )
         self.assertEqual(early_bird_title.get_attribute("text"), "早鳥首賣")
-
-    def test_early_bird_product_page(self):
-        self.cs_user.early_bird_prudoct_page()
 
 
 if __name__ == "__main__":
