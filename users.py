@@ -144,6 +144,7 @@ class CSUser(User):
         self.element_selector(HOMEPAGE["account"]).click()
 
     def early_bird_list(self):
+        sleep(5)
         while True:
             try:
                 self.element_selector("+android.widget.TextView+看全部早鳥首賣").click()
@@ -165,6 +166,10 @@ class CSUser(User):
         random_string = "".join(random.choice(letters) for num in range(8))
         return random_string
 
+    def get_random_num(self):
+        random_num = random.randint(1000, 9999)
+        return random_num
+
     def sign_up(self, lastname, firstname, email, password, password_confirmed):
         self.sign_up_page()
         self.element_selector(SIGNUPPAGE["last_name"]).send_keys(lastname)
@@ -176,10 +181,14 @@ class CSUser(User):
         )
         self.element_selector(SIGNUPPAGE["sign_up"]).click()
 
-    def sign_in(self, email, password):
+    def sign_in(self, **user):
+        email = user["email"]
+        password = user["password"]
         self.sign_in_page()
-        self.element_selector(SIGNINPAGE["email"]).send_keys(email)
-        self.element_selector(SIGNINPAGE["password"]).send_keys(password)
+        if email:
+            self.element_selector(SIGNINPAGE["email"]).send_keys(email)
+        if password:
+            self.element_selector(SIGNINPAGE["password"]).send_keys(password)
         self.element_selector(SIGNINPAGE["sign_in"]).click()
 
     def clear_chrome_storage(self):
@@ -295,5 +304,5 @@ class CSUser(User):
                 pass
             self.element_selector(GOOGLE_SIGNIN["accept"]).click()
         except NoSuchElementException:
-            self.element_selector(GOOGLE_SIGNIN["signed_account"]).click()
+            self.element_selector("com.google.android.gms:id/account_name").click()
             pass
