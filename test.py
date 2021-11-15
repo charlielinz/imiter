@@ -38,21 +38,21 @@ class TestGeneralSignin(unittest.TestCase):
     def test_sign_in_with_empty_email(self):
         self.cs_user.sign_in(email="", password="00000000")
         email_field = self.cs_user.element_selector(
-            "+android.widget.TextView&請填寫 email"
+            "+android.widget.TextView+請填寫 email"
         )
         self.assertEqual(email_field.get_attribute("displayed"), "true")
 
     def test_sign_in_with_empty_password(self):
         self.cs_user.sign_in(email="test2@test.com", password="")
-        password_field = self.cs_user.element_selector("+android.widget.TextView&請輸入密碼")
+        password_field = self.cs_user.element_selector("+android.widget.TextView+請輸入密碼")
         self.assertEqual(password_field.get_attribute("displayed"), "true")
 
     def test_sign_in_with_empty_email_and_password(self):
         self.cs_user.sign_in(email="", password="")
         email_field = self.cs_user.element_selector(
-            "+android.widget.TextView&請填寫 email"
+            "+android.widget.TextView+請填寫 email"
         )
-        password_field = self.cs_user.element_selector("+android.widget.TextView&請輸入密碼")
+        password_field = self.cs_user.element_selector("+android.widget.TextView+請輸入密碼")
         self.assertEqual(email_field.get_attribute("displayed"), "true")
         self.assertEqual(password_field.get_attribute("displayed"), "true")
 
@@ -60,7 +60,7 @@ class TestGeneralSignin(unittest.TestCase):
         bad_email = self.cs_user.get_random_string()
         self.cs_user.sign_in(email=bad_email, password="00000000")
         email_field = self.cs_user.element_selector(
-            "+android.widget.TextView&email 格式錯誤"
+            "+android.widget.TextView+email 格式錯誤"
         )
         self.assertEqual(email_field.get_attribute("displayed"), "true")
 
@@ -68,7 +68,7 @@ class TestGeneralSignin(unittest.TestCase):
         bad_password = self.cs_user.get_random_num()
         self.cs_user.sign_in(email="test2@test.com", password=bad_password)
         password_field = self.cs_user.element_selector(
-            "+android.widget.TextView&密碼長度必須大於8碼"
+            "+android.widget.TextView+密碼長度必須大於8碼"
         )
         self.assertEqual(password_field.get_attribute("displayed"), "true")
 
@@ -77,10 +77,10 @@ class TestGeneralSignin(unittest.TestCase):
         bad_password = self.cs_user.get_random_num()
         self.cs_user.sign_in(email=bad_email, password=bad_password)
         email_field = self.cs_user.element_selector(
-            "+android.widget.TextView&email 格式錯誤"
+            "+android.widget.TextView+email 格式錯誤"
         )
         password_field = self.cs_user.element_selector(
-            "+android.widget.TextView&密碼長度必須大於8碼"
+            "+android.widget.TextView+密碼長度必須大於8碼"
         )
         self.assertEqual(email_field.get_attribute("displayed"), "true")
         self.assertEqual(password_field.get_attribute("displayed"), "true")
@@ -142,18 +142,16 @@ class TestThirdPartySignin(unittest.TestCase):
         account_page = self.cs_user.element_selector(HOMEPAGE["account"])
         self.assertEqual(account_page.get_attribute("clickable"), "true")
 
+class TestAccountManaging(unittestt.TestCase):
+    def setUp(self):
+        self.user = User(CS_APP_CAPS)
+        self.cs_user = CSUser(self.user)
+        self.cs_user.google_sign_in(email=ACCOUNT["google_email"], password=ACCOUNT["google_password"])
 
-# class TestDiscovery(unittest.TestCase):
-#     def setUp(self):
-#         self.user = User(CS_APP_CAPS)
-#         self.cs_user = CSUser(self.user)
+    def tearDown(self):
+        self.user.driver.quit()
 
-#     def test_early_bird_list(self):
-#         self.cs_user.early_bird_list()
-#         early_bird_title = self.cs_user.element_selector(
-#             "+android.widget.TextView&早鳥首賣"
-#         )
-#         self.assertEqual(early_bird_title.get_attribute("text"), "早鳥首賣")
+
 
 
 if __name__ == "__main__":

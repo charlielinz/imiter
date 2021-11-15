@@ -49,7 +49,7 @@ class User:
             return self.user.driver.find_element_by_xpath(xpath)
         if prefix == "+":
             original_string = string.replace("+", "", 1)
-            attribute_list = original_string.split("&")
+            attribute_list = original_string.split("+")
             class_name = attribute_list[0]
             text = attribute_list[1]
             return self.user.driver.find_element_by_android_uiautomator(
@@ -78,7 +78,7 @@ class User:
             return self.user.driver.find_elements_by_xpath(xpath)
         if prefix == "+":
             original_string = string.replace("+", "", 1)
-            attribute_list = original_string.split("&")
+            attribute_list = original_string.split("+")
             class_name = attribute_list[0]
             text = attribute_list[1]
             return self.user.driver.find_element_by_android_uiautomator(
@@ -192,7 +192,7 @@ class CSUser(User):
         self.element_selector(SIGNINPAGE["sign_in"]).click()
 
     def clear_chrome_storage(self):
-        self.element_selector(ANDROID_SETTING["app & notifications"]).click()
+        self.element_selector("+android.widget.TextView+Apps & notifications").click()
         self.element_selector("@com.android.settings:id/header_details").click()
         sleep(1)
         app_list = self.elements_selector("@android:id/title")
@@ -201,12 +201,12 @@ class CSUser(User):
             if "Chrome" in str(app_name):
                 app.click()
                 sleep(1)
-                self.element_selector(ANDROID_SETTING["Storage & Cache"]).click()
-                self.element_selector(ANDROID_SETTING["Clear Storage"]).click()
                 self.element_selector(
-                    ANDROID_SETTING["Google Chrome Clear All Data"]
+                    "+android.widget.TextView+Storage & cache"
                 ).click()
-                self.element_selector(ANDROID_SETTING["Google Chrome OK"]).click()
+                self.element_selector("+android.widget.Button+Clear storage").click()
+                self.element_selector("+android.widget.Button+CLEAR ALL DATA").click()
+                self.element_selector("+android.widget.Button+OK").click()
                 break
 
     def clear_google_storage(self):
@@ -304,5 +304,7 @@ class CSUser(User):
                 pass
             self.element_selector(GOOGLE_SIGNIN["accept"]).click()
         except NoSuchElementException:
-            self.element_selector("com.google.android.gms:id/account_name").click()
+            account_list = self.elements_selector("@com.google.android.gms:id/container")
+            account_index = random.randint(0, len(account_list) - 2)
+            account_list[account_index].click()
             pass
