@@ -142,16 +142,17 @@ class TestThirdPartySignin(unittest.TestCase):
         account_page = self.cs_user.element_selector(HOMEPAGE["account"])
         self.assertEqual(account_page.get_attribute("clickable"), "true")
 
+
 class TestAccountManaging(unittestt.TestCase):
     def setUp(self):
         self.user = User(CS_APP_CAPS)
         self.cs_user = CSUser(self.user)
-        self.cs_user.google_sign_in(email=ACCOUNT["google_email"], password=ACCOUNT["google_password"])
+        self.cs_user.google_sign_in(
+            email=ACCOUNT["google_email"], password=ACCOUNT["google_password"]
+        )
 
     def tearDown(self):
         self.user.driver.quit()
-
-
 
 
 if __name__ == "__main__":
