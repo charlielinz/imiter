@@ -122,6 +122,15 @@ class User:
             start_point[0], start_point[1], end_point[0], end_point[1]
         )
 
+    def get_random_string(self, num):
+        letters = string.ascii_lowercase
+        random_string = "".join(random.choice(letters) for num in range(num))
+        return random_string
+
+    def get_random_num(self):
+        random_num = random.randint(1000, 9999)
+        return random_num
+
 
 class CSUser(User):
     """
@@ -131,65 +140,28 @@ class CSUser(User):
     def __init__(self, user):
         self.user = user
 
-    def discovery_page(self):
-        self.element_selector(HOMEPAGE["discovery"]).click()
-
-    def search_page(self):
-        self.element_selector(HOMEPAGE["search"]).click()
-
-    def favorite_page(self):
-        self.element_selector(HOMEPAGE["favorite"]).click()
-
-    def account_page(self):
-        self.element_selector(HOMEPAGE["account"]).click()
-
-    def early_bird_list(self):
-        sleep(5)
-        while True:
-            try:
-                self.element_selector("+android.widget.TextView+看全部早鳥首賣").click()
-                break
-            except NoSuchElementException:
-                self._swipe_up()
-                sleep(2)
-
-    def sign_up_page(self):
-        self.account_page()
-        self.element_selector(ACCOUNTPAGE["sign_up_page"]).click()
-
-    def sign_in_page(self):
-        self.account_page()
-        self.element_selector(ACCOUNTPAGE["sign_in_normal"]).click()
-
-    def get_random_string(self):
-        letters = string.ascii_lowercase
-        random_string = "".join(random.choice(letters) for num in range(8))
-        return random_string
-
-    def get_random_num(self):
-        random_num = random.randint(1000, 9999)
-        return random_num
-
-    def sign_up(self, lastname, firstname, email, password, password_confirmed):
-        self.sign_up_page()
-        self.element_selector(SIGNUPPAGE["last_name"]).send_keys(lastname)
-        self.element_selector(SIGNUPPAGE["first_name"]).send_keys(firstname)
-        self.element_selector(SIGNUPPAGE["email"]).send_keys(email)
-        self.element_selector(SIGNUPPAGE["password"]).send_keys(password)
-        self.element_selector(SIGNUPPAGE["password_confirmed"]).send_keys(
-            password_confirmed
-        )
-        self.element_selector(SIGNUPPAGE["sign_up"]).click()
+    def sign_up(self, **user):
+        self.element_selector("+android.widget.TextView+帳戶").click()
+        self.element_selector("+android.widget.TextView+註冊").click()
+        form_fields = self.elements_selector("#android.widget.EditText")
+        last_name_field, first_name_field, email_field, password_field, password_confirmed_field = form_fields
+        last_name_field.send_keys(user["last_name"])
+        first_name_field.send_keys(user["first_name"])
+        email_field.send_keys(user["email"])
+        password_field.send_keys(user["password"])
+        password_confirmed_field.send_keys(user["password_confirmed"])
+        self.element_selector("+android.widget.TextView+註冊").click()
 
     def sign_in(self, **user):
-        email = user["email"]
-        password = user["password"]
-        self.sign_in_page()
-        if email:
-            self.element_selector(SIGNINPAGE["email"]).send_keys(email)
-        if password:
-            self.element_selector(SIGNINPAGE["password"]).send_keys(password)
-        self.element_selector(SIGNINPAGE["sign_in"]).click()
+        self.element_selector("+android.widget.TextView+帳戶").click()
+        self.element_selector("+android.widget.TextView+登入").click()
+        form_fields = self.elements_selector("#android.widget.EditText")
+        email_field, password_field = form_fields
+        if user["email"]:
+            email_field.send_keys(user["email"])
+        if user["password"]:
+            password_field.send_keys(user["password"])
+        self.element_selector("+android.widget.TextView+登入").click()
 
     def clear_chrome_storage(self):
         self.element_selector("+android.widget.TextView+Apps & notifications").click()
@@ -245,7 +217,7 @@ class CSUser(User):
             pass
 
     def facebook_sign_in(self, email, password):
-        self.account_page()
+        self.element_selector("+android.widget.TextView+帳戶").click()
         self.element_selector(ACCOUNTPAGE["sign_in_facebook"]).click()
         sleep(2)
         try:
@@ -268,7 +240,7 @@ class CSUser(User):
             self.element_selector(FACEBOOK_SIGNIN["continue"]).click()
 
     def line_sign_in(self, email, password):
-        self.account_page()
+        self.element_selector("+android.widget.TextView+帳戶").click()
         self.element_selector(ACCOUNTPAGE["sign_in_line"]).click()
         sleep(2)
         try:
@@ -284,7 +256,7 @@ class CSUser(User):
         self.element_selector(LINE_SIGNIN["allow_access"]).click()
 
     def google_sign_in(self, email, password):
-        self.account_page()
+        self.element_selector("+android.widget.TextView+帳戶").click()
         self.element_selector(ACCOUNTPAGE["sign_in_google"]).click()
         sleep(3)
         try:
@@ -304,7 +276,83 @@ class CSUser(User):
                 pass
             self.element_selector(GOOGLE_SIGNIN["accept"]).click()
         except NoSuchElementException:
-            account_list = self.elements_selector("@com.google.android.gms:id/container")
+            account_list = self.elements_selector(
+                "@com.google.android.gms:id/container"
+            )
             account_index = random.randint(0, len(account_list) - 2)
             account_list[account_index].click()
             pass
+
+    def edit_user_name(self, **user):
+        last_name = user["last_name"]
+        first_name = user["first_name"]
+        self.element_selector("+android.widget.TextView+帳戶").click()
+        self.element_selector("+android.widget.TextView+帳號管理").click()
+        form_fields = self.elements_selector("#android.widget.EditText")
+        last_name_field = form_fields[0]
+        first_name_field = form_fields[1]
+        if last_name:
+            last_name_field.clear()
+            last_name_field.send_keys(last_name)
+        if first_name:
+            first_name_field.clear()
+            first_name_field.send_keys(first_name)
+        self.element_selector("+android.widget.TextView+更新資料").click()
+
+    """ waiting for a element id """
+    # def edit_user_gender(self):
+    #     self.element_selector("+android.widget.TextView+帳戶").click()
+    #     self.element_selector("+android.widget.TextView+帳號管理").click()
+
+    def edit_traced_themes(self):
+        self.element_selector("+android.widget.TextView+帳戶").click()
+        self.element_selector("+android.widget.TextView+追蹤主題").click()
+        themes = [
+            "日系質感",
+            "歐美精選",
+            "韓流生活",
+            "全台獨家",
+            "環保風尚",
+            "硬派軍風",
+            "咖啡時光",
+            "居家收納",
+            "科技新品",
+            "露營野餐",
+            "登山冒險",
+            "攝影美學",
+            "品酒精釀",
+            "飲茶雅趣",
+            "親子同樂",
+        ]
+        traced_theme_num = random.randint(1, 15)
+        for num in range(traced_theme_num):
+            theme_index = random.randint(0, 14)
+            self.element_selector(
+                f"+android.widget.TextView+{themes[theme_index]}"
+            ).click()
+        self.element_selector("+android.widget.TextView+確認").click()
+
+    """ unknown error: pop up sign-in page after click into shipping address page"""
+    # def add_new_shipping_address(self):
+    #     self.element_selector("+android.widget.TextView+帳戶").click()
+    #     self.element_selector("+android.widget.TextView+常用收件地址").click()
+    #     self.element_selector("+android.widget.TextView++ 新增收件地址").click()
+
+    def change_password(self, email):
+        self.element_selector("+android.widget.TextView+帳戶").click()
+        self.element_selector("+android.widget.TextView+變更密碼").click()
+        self.element_selector("#android.widget.EditText").send_keys(email)
+        self.element_selector("+android.widget.TextView+送出").click()
+
+    def change_country(self):
+        country = {"台灣", "香港", "馬來西亞", "新加玻"}
+        self.element_selector("+android.widget.TextView+帳戶").click()
+        self.element_selector("+android.widget.TextView+設定").click()
+        self.element_selector("+android.widget.TextView+所在國家").click()
+        self.element_selector("+android.widget.TextView+台灣").click()
+        self.element_selector("+android.widget.TextView+確認").click()
+        self.element_selector(
+            "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.widget.ImageView"
+        ).click()
+        self.element_selector("+android.widget.TextView+探索")
+        self.element_selector("+android.widget.TextView+看更多熱銷排行").click()

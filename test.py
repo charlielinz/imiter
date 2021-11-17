@@ -19,20 +19,18 @@ class TestGeneralSignin(unittest.TestCase):
 
     def test_sign_up_with_all_fields_filled(self):
         self.cs_user.sign_up(
-            lastname="test12",
-            firstname="test",
-            email="test12@test.com",
+            last_name="test18",
+            first_name="test",
+            email="test18@test.com",
             password="00000000",
             password_confirmed="00000000",
         )
-        sign_up_finish = self.cs_user.element_selector(
-            SIGNUPPAGE["interested_theme_finish"]
-        )
-        self.assertEqual(sign_up_finish.get_attribute("clickable"), "true")
+        sign_up_finish = self.cs_user.element_selector("+android.widget.TextView+略過")
+        self.assertEqual(sign_up_finish.get_attribute("text"), "略過")
 
     def test_sign_in(self):
         self.cs_user.sign_in(email="test2@test.com", password="00000000")
-        account_page = self.cs_user.element_selector(HOMEPAGE["account"])
+        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
         self.assertEqual(account_page.get_attribute("clickable"), "true")
 
     def test_sign_in_with_empty_email(self):
@@ -57,7 +55,7 @@ class TestGeneralSignin(unittest.TestCase):
         self.assertEqual(password_field.get_attribute("displayed"), "true")
 
     def test_sign_in_with_invalid_syntax_of_email(self):
-        bad_email = self.cs_user.get_random_string()
+        bad_email = self.cs_user.get_random_string(8)
         self.cs_user.sign_in(email=bad_email, password="00000000")
         email_field = self.cs_user.element_selector(
             "+android.widget.TextView+email 格式錯誤"
@@ -73,7 +71,7 @@ class TestGeneralSignin(unittest.TestCase):
         self.assertEqual(password_field.get_attribute("displayed"), "true")
 
     def test_sign_in_with_invalid_syntax_of_email_and_password(self):
-        bad_email = self.cs_user.get_random_string()
+        bad_email = self.cs_user.get_random_string(8)
         bad_password = self.cs_user.get_random_num()
         self.cs_user.sign_in(email=bad_email, password=bad_password)
         email_field = self.cs_user.element_selector(
@@ -86,7 +84,7 @@ class TestGeneralSignin(unittest.TestCase):
         self.assertEqual(password_field.get_attribute("displayed"), "true")
 
     def test_sign_in_with_wrong_email(self):
-        wrong_email = self.cs_user.get_random_string() + "@gmail.com"
+        wrong_email = self.cs_user.get_random_string(8) + "@gmail.com"
         self.cs_user.sign_in(email=wrong_email, password="00000000")
         alert_field = self.cs_user.element_selector("@android:id/message")
         self.assertEqual(alert_field.get_attribute("text"), "請輸入正確的 Email 及密碼")
@@ -98,7 +96,7 @@ class TestGeneralSignin(unittest.TestCase):
         self.assertEqual(alert_field.get_attribute("text"), "請輸入正確的 Email 及密碼")
 
     def test_sign_in_with_wrong_email_and_password(self):
-        wrong_email = self.cs_user.get_random_string() + "@gmail.com"
+        wrong_email = self.cs_user.get_random_string(8) + "@gmail.com"
         wrong_password = "0000000000"
         self.cs_user.sign_in(email=wrong_email, password=wrong_password)
         alert_field = self.cs_user.element_selector("@android:id/message")
@@ -125,34 +123,75 @@ class TestThirdPartySignin(unittest.TestCase):
         self.cs_user.facebook_sign_in(
             email=ACCOUNT["facebook_email"], password=ACCOUNT["facebook_password"]
         )
-        account_page = self.cs_user.element_selector(HOMEPAGE["account"])
+        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
         self.assertEqual(account_page.get_attribute("clickable"), "true")
 
     def test_line_sign_in(self):
         self.cs_user.line_sign_in(
             email=ACCOUNT["line_email"], password=ACCOUNT["line_password"]
         )
-        account_page = self.cs_user.element_selector(HOMEPAGE["account"])
+        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
         self.assertEqual(account_page.get_attribute("clickable"), "true")
 
     def test_google_sign_in(self):
         self.cs_user.google_sign_in(
             email=ACCOUNT["google_email"], password=ACCOUNT["google_password"]
         )
-        account_page = self.cs_user.element_selector(HOMEPAGE["account"])
+        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
         self.assertEqual(account_page.get_attribute("clickable"), "true")
 
 
-class TestAccountManaging(unittestt.TestCase):
+class TestAccountManaging(unittest.TestCase):
     def setUp(self):
         self.user = User(CS_APP_CAPS)
         self.cs_user = CSUser(self.user)
-        self.cs_user.google_sign_in(
-            email=ACCOUNT["google_email"], password=ACCOUNT["google_password"]
-        )
+        self.cs_user.sign_in(email="test2@test.com", password="00000000")
 
     def tearDown(self):
         self.user.driver.quit()
+
+    def test_edit_last_name(self):
+        last_name = self.cs_user.get_random_string(4)
+        self.cs_user.edit_user_name(last_name=last_name, first_name="")
+        form_fields = self.cs_user.elements_selector("#android.widget.EditText")
+        last_name_field = form_fields[0]
+        self.assertEqual(last_name_field.get_attribute("text"), last_name)
+
+    def test_edit_first_name(self):
+        first_name = self.cs_user.get_random_string(4)
+        self.cs_user.edit_user_name(last_name="", first_name=first_name)
+        form_fields = self.cs_user.elements_selector("#android.widget.EditText")
+        first_name_field = form_fields[1]
+        self.assertEqual(first_name_field.get_attribute("text"), first_name)
+
+    """ waiting for a element id"""
+    # def test_edit_gender(self):
+    #     self.cs_user.edit_user_gender()
+
+    def test_edit_traced_themes(self):
+        self.cs_user.edit_traced_themes()
+        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
+        self.assertEqual(account_page.get_attribute("clickable"), "true")
+
+    """ unknown error: pop up sign-in page after click into shipping address page"""
+    # def test_add_new_shipping_address(self):
+    #     self.cs_user.add_new_shipping_address()
+
+    def test_change_password(self):
+        self.cs_user.change_password(email="test2@test.com")
+        modal = self.cs_user.element_selector("+android.widget.TextView+認證信已發送")
+        self.assertEqual(modal.get_attribute("text"), "認證信已發送")
+
+    def test_change_country(self):
+        self.cs_user.change_country()
+        text_tabs = self.cs_user.elements_selector("#android.widget.TextView")
+        message = []
+        for text_tab in text_tabs:
+            if "NTD" in text_tab.text:
+                message.append("True")
+            else:
+                message.append("False")
+        self.assertTrue("True" in message)
 
 
 if __name__ == "__main__":
