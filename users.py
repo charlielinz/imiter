@@ -150,7 +150,7 @@ class CSUser(User):
         email_field.send_keys(user["email"])
         password_field.send_keys(user["password"])
         password_confirmed_field.send_keys(user["password_confirmed"])
-        self.element_selector("+android.widget.TextView+註冊").click()
+        self.element_selector(SIGNUPPAGE["sign_up"]).click()
 
     def sign_in(self, **user):
         self.element_selector("+android.widget.TextView+帳戶").click()
@@ -161,7 +161,7 @@ class CSUser(User):
             email_field.send_keys(user["email"])
         if user["password"]:
             password_field.send_keys(user["password"])
-        self.element_selector("+android.widget.TextView+登入").click()
+        self.element_selector(SIGNINPAGE["sign_in"]).click()
 
     def clear_chrome_storage(self):
         self.element_selector("+android.widget.TextView+Apps & notifications").click()
@@ -219,62 +219,52 @@ class CSUser(User):
     def facebook_sign_in(self, email, password):
         self.element_selector("+android.widget.TextView+帳戶").click()
         self.element_selector(ACCOUNTPAGE["sign_in_facebook"]).click()
-        sleep(2)
         try:
             self.element_selector("@com.android.chrome:id/terms_accept").click()
             self.element_selector("@com.android.chrome:id/negative_button").click()
         except NoSuchElementException:
             pass
-        sleep(2)
         try:
-            self.element_selector(FACEBOOK_SIGNIN["email"]).send_keys(email)
+            self.element_selector("//android.view.View[1]/android.view.View/android.view.View/android.widget.EditText").send_keys(email)
         except NoSuchElementException:
-            self.element_selector(FACEBOOK_SIGNIN["continue"]).click()
+            self.element_selector("+android.widget.Button+繼續").click()
             return
-        self.element_selector(FACEBOOK_SIGNIN["password"]).send_keys(password)
-        self.element_selector(FACEBOOK_SIGNIN["enter"]).click()
-        sleep(2)
+        self.element_selector("//android.view.View[2]/android.view.View[1]/android.view.View/android.widget.EditText").send_keys(password)
+        self.element_selector("+android.widget.Button+Log In").click()
         try:
-            self.element_selector(HOMEPAGE["account"])
+            self.element_selector("+android.widget.TextView+帳戶")
         except NoSuchElementException:
-            self.element_selector(FACEBOOK_SIGNIN["continue"]).click()
+            self.element_selector("+android.widget.Button+繼續").click()
 
     def line_sign_in(self, email, password):
         self.element_selector("+android.widget.TextView+帳戶").click()
         self.element_selector(ACCOUNTPAGE["sign_in_line"]).click()
-        sleep(2)
         try:
             self.element_selector("@com.android.chrome:id/terms_accept").click()
             self.element_selector("@com.android.chrome:id/negative_button").click()
         except NoSuchElementException:
             pass
-        sleep(2)
         self.element_selector(LINE_SIGNIN["email"]).send_keys(email)
         self.element_selector(LINE_SIGNIN["password"]).send_keys(password)
         self.element_selector(LINE_SIGNIN["enter"]).click()
-        sleep(1)
         self.element_selector(LINE_SIGNIN["allow_access"]).click()
 
     def google_sign_in(self, email, password):
         self.element_selector("+android.widget.TextView+帳戶").click()
         self.element_selector(ACCOUNTPAGE["sign_in_google"]).click()
-        sleep(3)
         try:
-            self.element_selector(GOOGLE_SIGNIN["email"]).send_keys(email)
-            self.element_selector(GOOGLE_SIGNIN["email_next"]).click()
+            self.element_selector("//android.view.View[1]/android.widget.EditText").send_keys(email)
+            self.element_selector("+android.widget.Button+Next").click()
             sleep(2)
-            self.element_selector(GOOGLE_SIGNIN["password"]).send_keys(password)
-            self.element_selector(GOOGLE_SIGNIN["password_next"]).click()
-            sleep(3)
-            self.element_selector(GOOGLE_SIGNIN["agree_button"]).click()
-            sleep(3)
-            switch = self.element_selector(GOOGLE_SIGNIN["switch"])
+            self.element_selector("//android.view.View[1]/android.widget.EditText").send_keys(password)
+            self.element_selector("//android.view.View[1]/android.view.View[4]/android.view.View").click()
+            self.element_selector("+android.widget.Button+I agree").click()
+            switch = self.element_selector("@com.google.android.gms:id/sud_items_switch")
             if switch.text == "ON":
                 switch.click()
-                sleep(2)
             else:
                 pass
-            self.element_selector(GOOGLE_SIGNIN["accept"]).click()
+            self.element_selector("+android.widget.Button+ACCEPT").click()
         except NoSuchElementException:
             account_list = self.elements_selector(
                 "@com.google.android.gms:id/container"

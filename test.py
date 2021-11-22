@@ -4,6 +4,9 @@ from time import sleep
 
 import HtmlTestRunner
 
+from selenium.common.exceptions import NoSuchElementException
+
+
 from utils import ANDROID_SETTING_CAPS, CS_APP_CAPS, GOOGLE_STORE_CAPS
 from users import User, CSUser
 from xpaths import DISCOVERYPAGE, ANDROID_SETTING, HOMEPAGE, SIGNUPPAGE
@@ -19,9 +22,9 @@ class TestGeneralSignin(unittest.TestCase):
 
     def test_sign_up_with_all_fields_filled(self):
         self.cs_user.sign_up(
-            last_name="test18",
+            last_name="test19",
             first_name="test",
-            email="test18@test.com",
+            email="test19@test.com",
             password="00000000",
             password_confirmed="00000000",
         )
@@ -30,8 +33,8 @@ class TestGeneralSignin(unittest.TestCase):
 
     def test_sign_in(self):
         self.cs_user.sign_in(email="test2@test.com", password="00000000")
-        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
-        self.assertEqual(account_page.get_attribute("clickable"), "true")
+        setting_page = self.cs_user.element_selector("+android.widget.TextView+設定")
+        self.assertEqual(setting_page.get_attribute("displayed"), "true")
 
     def test_sign_in_with_empty_email(self):
         self.cs_user.sign_in(email="", password="00000000")
@@ -123,22 +126,37 @@ class TestThirdPartySignin(unittest.TestCase):
         self.cs_user.facebook_sign_in(
             email=ACCOUNT["facebook_email"], password=ACCOUNT["facebook_password"]
         )
-        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
-        self.assertEqual(account_page.get_attribute("clickable"), "true")
+        cancel_button = self.cs_user.element_selector(
+            "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.widget.ImageView"
+        )
+        if cancel_button:
+            cancel_button.click()
+        setting_page = self.cs_user.element_selector("+android.widget.TextView+設定")
+        self.assertEqual(setting_page.get_attribute("bounds"), "[165,1376][970,1429]")
 
     def test_line_sign_in(self):
         self.cs_user.line_sign_in(
             email=ACCOUNT["line_email"], password=ACCOUNT["line_password"]
         )
-        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
-        self.assertEqual(account_page.get_attribute("clickable"), "true")
+        cancel_button = self.cs_user.element_selector(
+            "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.widget.ImageView"
+        )
+        if cancel_button:
+            cancel_button.click()
+        setting_page = self.cs_user.element_selector("+android.widget.TextView+設定")
+        self.assertEqual(setting_page.get_attribute("bounds"), "[165,1376][970,1429]")
 
     def test_google_sign_in(self):
         self.cs_user.google_sign_in(
             email=ACCOUNT["google_email"], password=ACCOUNT["google_password"]
         )
-        account_page = self.cs_user.element_selector("+android.widget.TextView+帳戶")
-        self.assertEqual(account_page.get_attribute("clickable"), "true")
+        cancel_button = self.cs_user.element_selector(
+            "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup/android.widget.ImageView"
+        )
+        if cancel_button:
+            cancel_button.click()
+        setting_page = self.cs_user.element_selector("+android.widget.TextView+設定")
+        self.assertEqual(setting_page.get_attribute("bounds"), "[165,1376][970,1429]")
 
 
 class TestAccountManaging(unittest.TestCase):
